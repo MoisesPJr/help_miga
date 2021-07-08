@@ -23,8 +23,9 @@ abstract class ContatoDataBase : RoomDatabase(){
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     ContatoDataBase::class.java,
-                    "word_database"
-                ).build()
+                    "contato_database")
+                    .allowMainThreadQueries()
+                    .build()
                 INSTANCE = instance
                 // return instance
                 instance

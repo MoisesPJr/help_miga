@@ -1,6 +1,12 @@
 package com.example.helpmiga.ui
 
+import android.content.Intent
+import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -10,30 +16,31 @@ import com.example.helpmiga.ContatoApplication
 import com.example.helpmiga.data.viewModel.ContatoViewModel
 import com.example.helpmiga.data.viewModel.ContatoViewModelFactory
 import com.example.helpmiga.databinding.ActivityContatosBinding
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class ActivityContatos : AppCompatActivity() {
     private lateinit var binding: ActivityContatosBinding
-    private var listaContatos = mutableListOf<Contato>()
-
+    private var listaContatos = listOf<Contato>()
+    val REQUEST_SELECT_CONTACT = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val _binding = ActivityContatosBinding.inflate(layoutInflater)
         setContentView(_binding.root)
         binding = _binding
+
+        listaContato()
         setView()
-        carregarContatos()
     }
+
 
     private val contatoViewModel: ContatoViewModel by viewModels {
         ContatoViewModelFactory((application as ContatoApplication).repository)
     }
 
-
-      fun carregarContatos() {
-//        val contatosDAO = ContatosDAO(applicationContext)
-        listaContatos = contatoViewModel.listContato()
-        //Configurar adapter
+    fun listaContato(){
+        listaContatos = contatoViewModel.listaContatos()
         val adapter = AdapterContatos(listaContatos)
         //Configurar RecyclerViewdapter
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(applicationContext)
@@ -44,21 +51,47 @@ class ActivityContatos : AppCompatActivity() {
     }
 
     fun setView() {
-        binding.buttonAdd.setOnClickListener{
-            criaContato()
+        binding.buttonAdd.setOnClickListener {
+            abrirContatos()
         }
     }
 
+    fun abrirContatos() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
+        startActivityForResult(intent, REQUEST_SELECT_CONTACT)
+    }
 
-    fun criaContato() {
-        var listaCont: MutableList<Contato> = mutableListOf()
+    override fun onActivityResult(codigo: Int, resultado: Int, intent: Intent?) {
+        super.onActivityResult(codigo, resultado, intent)
+        val contatos = Contato()
+        if (codigo == REQUEST_SELECT_CONTACT && resultado == RESULT_OK) {
+            if (intent != null) {
+                selecionaContato(contatos, intent)
+                listaContato()
+            }
+        }
+    }
 
-        var contato = Contato()
-        contato.nomeContato = "Moisés"
-        contato.telefoneContato = "14997818811"
-        contato.idBotao = 1L
-        listaCont.add(contato)
-        contatoViewModel.insert(contato)
+    fun selecionaContato(contatos: Contato, intent: Intent) {
+        val contactUri: Uri? = intent.data
+        val cursor: Cursor? = contactUri?.let { contentResolver.query(it, null, null, null, null) }
+        val indexName: Int = cursor?.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)!!
+        val indexTelefone: Int = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+        cursor.moveToFirst()
+        contatos.nomeContato = cursor?.getString(indexName)
+        contatos.telefoneContato = cursor?.getString(indexTelefone)
+
+            try {
+                contatoViewModel.insert(contatos)
+                Log.i("INFO - NOME", "${contatos.nomeContato}")
+                Log.i("INFO - Telefone", "${contatos.telefoneContato}")
+                Toast.makeText(applicationContext, "Sucesso ao salvar contato", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                Toast.makeText(applicationContext, "Erro ao salvar contato", Toast.LENGTH_LONG).show()
+                Log.i("INFO - Contato", "Erro ao salvar contato" + e.message)
+            }
+
     }
 
 }

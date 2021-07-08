@@ -1,6 +1,7 @@
 package com.example.helpmiga.data.db
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -13,7 +14,7 @@ interface ContatoDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(contato: Contato)
 
-    @Query("SELECT * FROM CONTATO")
-    suspend fun listContato() : MutableList<Contato>
+    @Query("SELECT * FROM contato")
+      fun listContato() : List<Contato>
 
 }

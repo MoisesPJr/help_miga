@@ -1,11 +1,9 @@
 package com.example.helpmiga.data.viewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.helpmiga.data.repository.ContatoRepository
 import com.example.helpmiga.ui.Contato
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class ContatoViewModel(private val repository: ContatoRepository) : ViewModel() {
@@ -14,9 +12,9 @@ class ContatoViewModel(private val repository: ContatoRepository) : ViewModel() 
         repository.insert(contato)
     }
 
-    fun listContato() = viewModelScope.launch {
-        this@ContatoViewModel.repository.listContato()
-    }
+     fun listaContatos() : List<Contato>{
+      return repository.getallContatos()
+   }
 
 
 }
