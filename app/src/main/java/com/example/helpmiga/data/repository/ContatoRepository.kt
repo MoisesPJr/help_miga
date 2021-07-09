@@ -15,10 +15,19 @@ class ContatoRepository(private val contatoDao: ContatoDao) {
         contatoDao.insert(contato)
     }
 
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun apagarContato(contato: Contato) {
+        contatoDao.apagarContato(contato)
+    }
 
 
        fun getallContatos(): List<Contato> {
         return contatoDao.listContato()
+    }
+
+    fun getQtdContatos(): Int {
+        return contatoDao.getQtdContato()
     }
 
 }

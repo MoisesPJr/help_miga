@@ -12,9 +12,19 @@ class ContatoViewModel(private val repository: ContatoRepository) : ViewModel() 
         repository.insert(contato)
     }
 
+
+    fun apagarContato(contato: Contato) = viewModelScope.launch {
+        repository.apagarContato(contato)
+    }
+
      fun listaContatos() : List<Contato>{
       return repository.getallContatos()
    }
+
+    fun getQtdContatos() : Int{
+        return repository.getQtdContatos()
+    }
+
 
 
 }

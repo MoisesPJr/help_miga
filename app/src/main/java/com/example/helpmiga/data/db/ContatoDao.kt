@@ -2,10 +2,7 @@ package com.example.helpmiga.data.db
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.example.helpmiga.ui.Contato
 
 @Dao
@@ -17,4 +14,9 @@ interface ContatoDao {
     @Query("SELECT * FROM contato")
       fun listContato() : List<Contato>
 
+      @Delete
+      fun apagarContato(contato: Contato)
+
+      @Query("SELECT COUNT(id) from contato")
+      fun getQtdContato() : Int
 }

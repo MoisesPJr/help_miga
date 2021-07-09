@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
@@ -13,20 +14,28 @@
         <TextView
             android:id="@+id/textNome"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Add contato"
             android:textSize="18sp"
             android:textStyle="normal|bold" />
 
-        <TextView
-            android:id="@+id/textTelefone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Telefone"
-            android:textStyle="bold" />
+        <Button
+            android:id="@+id/btn_del"
+            android:layout_width="1dp"
+            android:layout_height="20dp"
+            android:layout_weight="0.1"
+            android:background="@drawable/ic_baseline_delete_24"
+            app:backgroundTint="#FF0303" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textTelefone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Telefone"
+        android:textStyle="bold" />
 
 </LinearLayout>
