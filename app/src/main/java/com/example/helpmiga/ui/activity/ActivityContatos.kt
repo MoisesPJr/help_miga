@@ -1,4 +1,4 @@
-package com.example.helpmiga.ui
+package com.example.helpmiga.ui.activity
 
 import android.content.Intent
 import android.database.Cursor
@@ -17,6 +17,8 @@ import com.example.helpmiga.ContatoApplication
 import com.example.helpmiga.data.viewModel.ContatoViewModel
 import com.example.helpmiga.data.viewModel.ContatoViewModelFactory
 import com.example.helpmiga.databinding.ActivityContatosBinding
+import com.example.helpmiga.ui.adapter.AdapterContatos
+import com.example.helpmiga.data.model.Contato
 
 
 class ActivityContatos : AppCompatActivity() {

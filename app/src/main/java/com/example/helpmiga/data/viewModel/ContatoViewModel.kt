@@ -2,8 +2,7 @@ package com.example.helpmiga.data.viewModel
 
 import androidx.lifecycle.*
 import com.example.helpmiga.data.repository.ContatoRepository
-import com.example.helpmiga.ui.Contato
-import kotlinx.coroutines.flow.Flow
+import com.example.helpmiga.data.model.Contato
 import kotlinx.coroutines.launch
 
 class ContatoViewModel(private val repository: ContatoRepository) : ViewModel() {

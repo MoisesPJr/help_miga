@@ -1,4 +1,4 @@
-package com.example.helpmiga.ui
+package com.example.helpmiga.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.helpmiga.R
+import com.example.helpmiga.data.model.Contato
 
 
 class AdapterContatos(var listaContatos: MutableList<Contato>, private val onClickType: (Contato) -> Unit) : RecyclerView.Adapter<AdapterContatos.MyViewHolder>() {

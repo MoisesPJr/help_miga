@@ -1,12 +1,10 @@
-package com.example.helpmiga.ui
+package com.example.helpmiga.ui.activity
 
 
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.renderscript.ScriptGroup
 import android.view.*
-import android.widget.ImageButton
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -40,7 +38,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.getItemId()) {
             R.id.menuAgenda -> {
-                val intent = Intent(this,ActivityContatos::class.java )
+                val intent = Intent(this, ActivityContatos::class.java )
                 startActivity(intent)
             }
         }

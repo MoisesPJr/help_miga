@@ -1,4 +1,4 @@
-package com.example.helpmiga.ui
+package com.example.helpmiga.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

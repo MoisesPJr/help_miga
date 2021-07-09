@@ -1,9 +1,7 @@
 package com.example.helpmiga.data.db
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.room.*
-import com.example.helpmiga.ui.Contato
+import com.example.helpmiga.data.model.Contato
 
 @Dao
 interface ContatoDao {
