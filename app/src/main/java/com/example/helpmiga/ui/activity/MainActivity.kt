@@ -41,6 +41,10 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(this, ActivityContatos::class.java )
                 startActivity(intent)
             }
+            R.id.menuMapa ->{
+                val intent = Intent(this, MapaActivity::class.java )
+                startActivity(intent)
+            }
         }
         return super.onOptionsItemSelected(item)
     }

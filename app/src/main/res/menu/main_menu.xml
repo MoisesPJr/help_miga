@@ -2,11 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:id="@+id/menuMapa"
+        android:icon="@drawable/ic_baseline_map_24"
+        android:iconTint="@color/white"
+        app:showAsAction="always"
+        android:title="Mapa">
+    </item>
     <item android:id="@+id/menuAgenda"
         android:icon="@drawable/ic_baseline_people_24"
         android:iconTint="@color/white"
         app:showAsAction="always"
-        android:title="TODO">
+        android:title="Contatos">
     </item>
+
 
 </menu>
