@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "66518034582",
+    "project_id": "persuasive-pipe-319315",
+    "storage_bucket": "persuasive-pipe-319315.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:66518034582:android:490f0b4a08c36a272efab7",
+        "android_client_info": {
+          "package_name": "com.example.helpmiga"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "66518034582-sgdgvf6el1vs351ltdgqsrs7cl9en0ao.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.helpmiga",
+            "certificate_hash": "d99770e1b5df5b2c08c8b755c52373328a2a3007"
+          }
+        },
+        {
+          "client_id": "66518034582-quoaoh6s2a9i4tadvro9cjqrc0429t5l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJLEcbKl6BxcCqDySGF2SahmLOMB2e6Z8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "66518034582-quoaoh6s2a9i4tadvro9cjqrc0429t5l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

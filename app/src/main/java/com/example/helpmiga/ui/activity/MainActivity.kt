@@ -11,14 +11,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.example.helpmiga.R
 import com.example.helpmiga.databinding.ActivityMainBinding
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 
 class MainActivity : AppCompatActivity() {
 
 
+    private var dataBaseReference :DatabaseReference = FirebaseDatabase.getInstance().reference.root
+
     private lateinit var binding: ActivityMainBinding
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val _binding = ActivityMainBinding.inflate(layoutInflater)
@@ -64,5 +68,9 @@ class MainActivity : AppCompatActivity() {
 //        smsManager.sendTextMessage("014997818811", null, "Qualquer coisa", null, null)
 
         Toast.makeText(this, "Botão emergencia acionado", Toast.LENGTH_LONG).show()
+    }
+
+    fun criarNosBD(){
+        dataBaseReference.child("")
     }
 }
