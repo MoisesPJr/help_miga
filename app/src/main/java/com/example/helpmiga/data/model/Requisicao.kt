@@ -1,9 +1,10 @@
 package com.example.helpmiga.data.model
 
 data class Requisicao(
-    val id : Int,
-    val latitude : Double,
-    val longitude : Double,
-    val codigoRequisicao: Int,
-    val status : String
+    var id : Int = 0,
+    var latitude : Double = 0.0,
+    var longitude : Double = 0.0,
+    var codigoRequisicao: String = "",
+    var status : String = ""
 )
+

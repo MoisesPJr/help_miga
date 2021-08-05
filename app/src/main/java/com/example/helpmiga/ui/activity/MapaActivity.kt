@@ -2,21 +2,19 @@ package com.example.helpmiga.ui.activity
 
 import android.Manifest
 import android.app.AlertDialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentActivity
 import com.example.helpmiga.R
+import com.example.helpmiga.data.model.Requisicao
+import com.example.helpmiga.data.model.Usuario
 import com.example.helpmiga.utils.Permissoes
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -25,6 +23,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.database.*
 
 
 /**
@@ -34,7 +33,7 @@ class MapaActivity : FragmentActivity(), OnMapReadyCallback {
 
 
     private var permissoes = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-
+private lateinit var   dataBaseReference : DatabaseReference
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private var latitude  = 0.0
@@ -44,7 +43,6 @@ class MapaActivity : FragmentActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         // Retrieve the content view that renders the map.
         setContentView(R.layout.activity_mapa)
-
 
 
         //Validar Permissoes
@@ -60,7 +58,7 @@ class MapaActivity : FragmentActivity(), OnMapReadyCallback {
 
 
     override fun onMapReady(googleMap: GoogleMap?) {
-        getLocalizacaoUsuario(googleMap)
+        recuperarDadosLocaliacao(googleMap)
     }
 
 
@@ -78,10 +76,40 @@ class MapaActivity : FragmentActivity(), OnMapReadyCallback {
     }
 
 
+    fun recuperarDadosLocaliacao(googleMap: GoogleMap?){
+         dataBaseReference = FirebaseDatabase.getInstance().reference.child("ecxlFztlSt2iUmI4uEAFIa") // TODO pegar eventos do Firebase
 
+        val requisicaoListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val requisicao : Requisicao? = dataSnapshot.getValue(Requisicao::class.java)
+                if(requisicao?.status.equals("A")){
+                    getLocalizacaoUsuario(googleMap)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w("Teste", "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+
+        dataBaseReference.addValueEventListener(requisicaoListener)
+
+
+
+
+    }
+
+
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        dataBaseReference.onDisconnect()
+    }
 
     private fun getLocalizacaoUsuario(googleMap: GoogleMap?){
         googleMap?.apply {
+            googleMap.clear()
 
             if (ActivityCompat.checkSelfPermission(
                     applicationContext,
