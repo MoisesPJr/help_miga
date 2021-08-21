@@ -8,11 +8,11 @@ import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.FragmentActivity
 import com.example.helpmiga.R
 import com.example.helpmiga.data.model.Requisicao
-import com.example.helpmiga.data.model.Usuario
 import com.example.helpmiga.utils.Permissoes
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -29,24 +29,28 @@ import com.google.firebase.database.*
 /**
  * An activity that displays a Google map with a marker (pin) to indicate a particular location.
  */
-class MapaActivity : FragmentActivity(), OnMapReadyCallback {
+class MapaActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     private var permissoes = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-private lateinit var   dataBaseReference : DatabaseReference
+    private lateinit var dataBaseReference: DatabaseReference
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var mapa: GoogleMap
 
-    private var latitude  = 0.0
-    private var longitude  = 0.0
+
+
+    private var latitude = 0.0
+    private var longitude = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Retrieve the content view that renders the map.
         setContentView(R.layout.activity_mapa)
-
+        var toolbar = findViewById<Toolbar>(R.id.logo_toolbar)
+        setSupportActionBar(toolbar)
 
         //Validar Permissoes
-        Permissoes.validarPermissoes(permissoes,this,1)
+        Permissoes.validarPermissoes(permissoes, this, 1)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -57,32 +61,36 @@ private lateinit var   dataBaseReference : DatabaseReference
     }
 
 
+
     override fun onMapReady(googleMap: GoogleMap?) {
-        recuperarDadosLocaliacao(googleMap)
+        val codigo:String = intent.getStringExtra("codigo").toString()
+        recuperarDadosLocaliacao(googleMap,codigo)
     }
 
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        for(permissaoResult : Int in grantResults){
-            if(permissaoResult == PackageManager.PERMISSION_DENIED){
+        for (permissaoResult: Int in grantResults) {
+            if (permissaoResult == PackageManager.PERMISSION_DENIED) {
                 //Alerta
                 alertaValidacaoPermissao()
-            }else{
+            } else {
 
             }
         }
     }
 
 
-    fun recuperarDadosLocaliacao(googleMap: GoogleMap?){
-         dataBaseReference = FirebaseDatabase.getInstance().reference.child("ecxlFztlSt2iUmI4uEAFIa") // TODO pegar eventos do Firebase
+
+
+    fun recuperarDadosLocaliacao(googleMap: GoogleMap?,codigo: String) {
+        dataBaseReference = FirebaseDatabase.getInstance().reference.child(codigo) // TODO pegar eventos do Firebase
 
         val requisicaoListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val requisicao : Requisicao? = dataSnapshot.getValue(Requisicao::class.java)
-                if(requisicao?.status.equals("A")){
+                val requisicao: Requisicao? = dataSnapshot.getValue(Requisicao::class.java)
+                if (requisicao?.status.equals("A")) {
                     getLocalizacaoUsuario(googleMap)
                 }
             }
@@ -96,18 +104,14 @@ private lateinit var   dataBaseReference : DatabaseReference
         dataBaseReference.addValueEventListener(requisicaoListener)
 
 
-
-
     }
-
 
 
     override fun onBackPressed() {
         super.onBackPressed()
-        dataBaseReference.onDisconnect()
     }
 
-    private fun getLocalizacaoUsuario(googleMap: GoogleMap?){
+    private fun getLocalizacaoUsuario(googleMap: GoogleMap?) {
         googleMap?.apply {
             googleMap.clear()
 
@@ -143,10 +147,8 @@ private lateinit var   dataBaseReference : DatabaseReference
     }
 
 
-
-
-    fun alertaValidacaoPermissao(){
-        var builder : AlertDialog.Builder = AlertDialog.Builder(this)
+    fun alertaValidacaoPermissao() {
+        var builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setTitle("Permissoes Negadas")
         builder.setMessage("Para utilizar o app, é necessário aceitar as permissões")
         builder.setCancelable(false)
@@ -158,10 +160,9 @@ private lateinit var   dataBaseReference : DatabaseReference
             }
         })
 
-        var dialog : AlertDialog = builder.create()
+        var dialog: AlertDialog = builder.create()
         dialog.show()
     }
-
 
 
 }

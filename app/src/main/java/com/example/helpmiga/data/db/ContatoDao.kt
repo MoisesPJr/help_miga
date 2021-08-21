@@ -10,11 +10,11 @@ interface ContatoDao {
     suspend fun insert(contato: Contato)
 
     @Query("SELECT * FROM contato")
-      fun listContato() : List<Contato>
+    fun listContato(): List<Contato>
 
-      @Delete
-      fun apagarContato(contato: Contato)
+    @Delete
+    fun apagarContato(contato: Contato)
 
-      @Query("SELECT COUNT(id) from contato")
-      fun getQtdContato() : Int
+    @Query("SELECT COUNT(id) from contato")
+    fun getQtdContato(): Int
 }

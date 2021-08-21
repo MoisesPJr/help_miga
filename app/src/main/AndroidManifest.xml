@@ -8,6 +8,8 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".ContatoApplication"
@@ -44,7 +46,8 @@
             android:name=".ui.activity.MapaActivity"
             android:label="@string/title_activity_mapa" />
         <activity android:name=".ui.activity.ActivityContatos" />
-        <activity android:name=".ui.activity.HelpActivity"></activity>
+        <activity android:name=".ui.activity.HelpActivity"/>
+
 
         <service
             android:name=".service.MyIntentService"

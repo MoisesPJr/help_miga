@@ -32,7 +32,7 @@ class MyIntentService : IntentService("MyIntentService") {
     lateinit var fusedLocationClient: FusedLocationProviderClient
     private var dataBaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.root
 
-    private lateinit var locationCallback: LocationCallback
+     lateinit var locationCallback: LocationCallback
 
     companion object {
         private lateinit var instance: MyIntentService
@@ -47,7 +47,7 @@ class MyIntentService : IntentService("MyIntentService") {
             try {
                 dataBaseReference.child(instanceId.result).child("status").setValue("B")
             }catch (e:Exception){
-                Thread.sleep(5000)
+                Thread.sleep(2000)
                 dataBaseReference.child(instanceId.result).child("status").setValue("B")
                 Log.i("STATUS",e.toString())
             }
@@ -107,13 +107,16 @@ class MyIntentService : IntentService("MyIntentService") {
                 }
             })
 
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                locationResult ?: return
-                for (location in locationResult.locations){
-                    Log.i("Localizacao" , "Latitude: ${location.latitude} e Longitude: ${location.longitude}")
-                    lat = location.latitude
-                    long = location.longitude
+        if(isRunning) {
+
+            locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult?) {
+                    locationResult ?: return
+                    for (location in locationResult.locations) {
+                        Log.i("Localizacao", "Latitude: ${location.latitude} e Longitude: ${location.longitude}")
+                        lat = location.latitude
+                        long = location.longitude
+                    }
                 }
             }
         }
@@ -139,7 +142,7 @@ class MyIntentService : IntentService("MyIntentService") {
             while (isRunning) {
                 fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
                 criarNosBD()
-                Thread.sleep(5000)
+                Thread.sleep(10000)
             }
         } catch (e: InterruptedException) {
             Thread.currentThread().interrupt()
