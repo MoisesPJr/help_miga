@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Help Miga</string>
     <string name="title_activity_mapa">Map</string>
+
+    <string name="empty_description">Para enviar SMS para um contato, você precisa adicioná-lo na lista.</string>
+    <string name="empry_title">Lista de contatos vazia</string>
 </resources>

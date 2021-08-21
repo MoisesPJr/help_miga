@@ -6,34 +6,54 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.helpmiga.ContatoApplication
+import com.example.helpmiga.R
+import com.example.helpmiga.data.model.Contato
 import com.example.helpmiga.data.viewModel.ContatoViewModel
 import com.example.helpmiga.data.viewModel.ContatoViewModelFactory
 import com.example.helpmiga.databinding.ActivityContatosBinding
 import com.example.helpmiga.ui.adapter.AdapterContatos
-import com.example.helpmiga.data.model.Contato
+
+
+
+
 
 
 class ActivityContatos : AppCompatActivity() {
     private lateinit var binding: ActivityContatosBinding
     private var listaContatos = listOf<Contato>()
     val REQUEST_SELECT_CONTACT = 1
+    var isEnableMenu = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val _binding = ActivityContatosBinding.inflate(layoutInflater)
         setContentView(_binding.root)
         binding = _binding
-
         listaContato()
-        setView()
+        initView()
+    }
+
+
+    fun initView(){
+        binding.buttonAdd.setOnClickListener {
+            abrirContatos()
+        }
+
+        binding.emptyDataParent.buttonAdd.setOnClickListener {
+            abrirContatos()
+        }
     }
 
     private val adapter by lazy {
@@ -42,7 +62,6 @@ class ActivityContatos : AppCompatActivity() {
             {apagarContato(it)}
         )
     }
-
 
     private val contatoViewModel: ContatoViewModel by viewModels {
         ContatoViewModelFactory((application as ContatoApplication).repository)
@@ -58,25 +77,25 @@ class ActivityContatos : AppCompatActivity() {
         binding.recyclerContatos.setHasFixedSize(true)
         binding.recyclerContatos.addItemDecoration(DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL))
         binding.recyclerContatos.setAdapter(adapter)
-    }
-
-    fun setView() {
-        binding.buttonAdd.setOnClickListener {
-            abrirContatos()
+        if(listaContatos.isEmpty()){
+            binding.layoutAdd.visibility = View.GONE
+        }else{
+                habilitaBotaoAdd()
         }
-
-        habilitaBotaoAdd()
+        // Here
+        val emptyDataObserver = EmptyDataObserver(binding.recyclerContatos, binding.emptyDataParent.root)
+        adapter.registerAdapterDataObserver(emptyDataObserver)
 
     }
+
+
 
     fun habilitaBotaoAdd(){
         val quantidade = contatoViewModel.getQtdContatos()
         if(quantidade < 3) {
-            binding.buttonAdd.visibility = View.VISIBLE
-            binding.txtAdiciona.visibility = View.VISIBLE
+            binding.layoutAdd.visibility = View.VISIBLE
         }else{
-            binding.buttonAdd.visibility = View.GONE
-            binding.txtAdiciona.visibility = View.GONE
+            binding.layoutAdd.visibility = View.GONE
         }
     }
 
@@ -89,7 +108,6 @@ class ActivityContatos : AppCompatActivity() {
     fun apagarContato(contatos: Contato) {
         contatoViewModel.apagarContato(contatos)
         listaContato()
-        habilitaBotaoAdd()
     }
 
     override fun onActivityResult(codigo: Int, resultado: Int, intent: Intent?) {
@@ -99,7 +117,6 @@ class ActivityContatos : AppCompatActivity() {
             if (intent != null) {
                 selecionaContato(contatos, intent)
                 listaContato()
-                habilitaBotaoAdd()
             }
         }
     }
@@ -114,7 +131,7 @@ class ActivityContatos : AppCompatActivity() {
         contatos.telefoneContato = cursor?.getString(indexTelefone)
         try {
             contatoViewModel.insert(contatos)
-
+            habilitaBotaoAdd()
             Log.i("INFO - NOME", "${contatos.nomeContato}")
             Log.i("INFO - Telefone", "${contatos.telefoneContato}")
             Toast.makeText(applicationContext, "Sucesso ao salvar contato", Toast.LENGTH_LONG).show()

@@ -20,13 +20,6 @@ class AdapterContatos(var listaContatos: MutableList<Contato>, private val onCli
         val contatos: Contato = listaContatos[i]
         myViewHolder.nome.setText(contatos.nomeContato)
         myViewHolder.telefone.setText(contatos.telefoneContato)
-
-        if(listaContatos.size == 1){
-            myViewHolder.btnDell.visibility = View.GONE
-        }else{
-            myViewHolder.btnDell.visibility = View.VISIBLE
-        }
-
         myViewHolder.btnDell.setOnClickListener {
             onClickType.invoke(contatos)
             notifyDataSetChanged()
