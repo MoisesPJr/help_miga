@@ -1,16 +1,20 @@
 package com.example.helpmiga.ui.activity
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.text.InputType
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -130,6 +134,14 @@ class ActivityContatos : AppCompatActivity() {
         contatos.nomeContato = cursor?.getString(indexName)
         contatos.telefoneContato = cursor?.getString(indexTelefone)
         try {
+            var listContato = contatoViewModel.listaContatos()
+            listContato.forEach{
+                if(contatos.telefoneContato == it.telefoneContato && contatos.nomeContato == it.nomeContato){
+                    abrirDialog()
+                    return
+                }
+            }
+
             contatoViewModel.insert(contatos)
             habilitaBotaoAdd()
             Log.i("INFO - NOME", "${contatos.nomeContato}")
@@ -140,6 +152,16 @@ class ActivityContatos : AppCompatActivity() {
             Log.i("INFO - Contato", "Erro ao salvar contato" + e.message)
         }
 
+    }
+
+    fun abrirDialog() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setTitle("Contato Duplicado!")
+        builder.setMessage("Esse contato já está na sua lista.")
+        builder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
+            dialog.dismiss()
+        })
+        builder.show()
     }
 
 }

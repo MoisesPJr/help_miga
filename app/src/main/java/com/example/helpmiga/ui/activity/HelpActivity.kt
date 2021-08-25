@@ -3,19 +3,23 @@ package com.example.helpmiga.ui.activity
 
 import android.content.DialogInterface
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.telephony.SmsManager
 import android.text.InputType
 import android.view.*
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.example.helpmiga.ContatoApplication
 import com.example.helpmiga.R
+import com.example.helpmiga.data.viewModel.ContatoViewModel
+import com.example.helpmiga.data.viewModel.ContatoViewModelFactory
 import com.example.helpmiga.databinding.ActivityHelpBinding
 import com.example.helpmiga.service.MyIntentService
+import com.example.helpmiga.ui.SharedPreferences
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -25,11 +29,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.ktx.Firebase
-import java.time.Period
 import java.util.*
 import kotlin.concurrent.schedule
 
@@ -43,6 +44,9 @@ class HelpActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var m_text = ""
     private lateinit var auth: FirebaseAuth
+    private lateinit var sharedPreferences: SharedPreferences
+    var instanceId = FirebaseInstallations.getInstance().getId()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +60,12 @@ class HelpActivity : AppCompatActivity() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         googleAuth()
         configurarBotoes()
+        sharedPreferences = SharedPreferences(this)
+        sharedPreferences.salvarCodigo(instanceId.result)
+    }
+
+    private val contatoViewModel: ContatoViewModel by viewModels {
+        ContatoViewModelFactory((application as ContatoApplication).repository)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -83,7 +93,9 @@ class HelpActivity : AppCompatActivity() {
                 revokeAccess()
             }
             R.id.menuCancel -> {
-                MyIntentService.stopService()
+                if(MyIntentService.isRunning) {
+                    MyIntentService.stopService(applicationContext)
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -92,8 +104,6 @@ class HelpActivity : AppCompatActivity() {
     fun abrirDialog() {
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setTitle("Digite o código enviado por SMS")
-
-
         val input = EditText(this)
         input.inputType = InputType.TYPE_CLASS_TEXT
         builder.setView(input)
@@ -101,7 +111,7 @@ class HelpActivity : AppCompatActivity() {
         builder.setPositiveButton("ATIVAR", DialogInterface.OnClickListener { dialog, which ->
             m_text = input.text.toString()
             val intent = Intent(this, MapaActivity::class.java)
-            intent.putExtra("codigo",m_text)
+            intent.putExtra("codigo", m_text)
             startActivity(intent)
         })
         builder.setNegativeButton("CANCELAR", DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
@@ -109,13 +119,32 @@ class HelpActivity : AppCompatActivity() {
         builder.show()
     }
 
-    fun enviarHelp(instanceId : String){
+    fun enviarHelp() {
 
+        val listaContatos = contatoViewModel.listaContatos()
 
-        var message = "HelpMiga!\nVocê é o contato de emergência de ${auth.currentUser?.displayName}, coloque esse código na opção de mapa do app : ${instanceId} para começar a busca.\n "
+        var message =
+            "HelpMiga!\nVocê é o contato de emergência de ${auth.currentUser?.displayName}, coloque esse código na opção de mapa do app : ${sharedPreferences.getCodigo()} para começar a busca.\n "
         val sms = SmsManager.getDefault()
         val parts = sms.divideMessage(message)
-        sms.sendMultipartTextMessage("014997818811", null, parts, null, null)
+
+        listaContatos.forEach {
+            sms.sendMultipartTextMessage(it.telefoneContato, null, parts, null, null)
+        }
+
+
+    }
+
+    fun alert() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setTitle("Lista de contatos vazia")
+        builder.setMessage("Para utilizar a função de enviar Help você precisa adicionar pelo menos um contato na lista")
+        builder.setPositiveButton("ADICIONAR", DialogInterface.OnClickListener { dialog, which ->
+            val intent = Intent(this, ActivityContatos::class.java)
+            startActivity(intent)
+        })
+        builder.setNegativeButton("CANCELAR", DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
+        builder.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -146,13 +175,17 @@ class HelpActivity : AppCompatActivity() {
     }
 
     fun acionarBotao() {
-        var instanceId = FirebaseInstallations.getInstance().getId()
-        Intent(this, MyIntentService::class.java).also {
-            Timer("SettingUp", false).schedule(5000) {
-                enviarHelp(instanceId.result)
+        val listaContatos = contatoViewModel.listaContatos()
+        if (!listaContatos.isEmpty()) {
+            Intent(this, MyIntentService::class.java).also {
+                startService(it)
+                enviarHelp()
             }
-            startService(it)
+        }else{
+            alert()
         }
+
+
 //        criarNosBD()
         Toast.makeText(this, "Botão emergencia acionado", Toast.LENGTH_LONG).show()
     }

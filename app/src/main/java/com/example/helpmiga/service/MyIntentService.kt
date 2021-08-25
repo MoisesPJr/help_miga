@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.JobIntentService
 import com.example.helpmiga.data.model.Requisicao
+import com.example.helpmiga.ui.SharedPreferences
 import com.example.helpmiga.ui.activity.MainActivity
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.*
@@ -32,25 +33,21 @@ class MyIntentService : IntentService("MyIntentService") {
     lateinit var fusedLocationClient: FusedLocationProviderClient
     private var dataBaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.root
 
-     lateinit var locationCallback: LocationCallback
+    lateinit var locationCallback: LocationCallback
 
     companion object {
         private lateinit var instance: MyIntentService
-        var isRunning = true
-         var lat = 0.0
-         var long = 0.0
-        fun stopService() {
+        var isRunning = false
+        var lat = 0.0
+        var long = 0.0
+
+
+        fun stopService(context: Context) {
             isRunning = false
             instance.stopSelf()
-            var instanceId = FirebaseInstallations.getInstance().getId()
+            val sharedPreferences = context.let { SharedPreferences(it) }
             var dataBaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.root
-            try {
-                dataBaseReference.child(instanceId.result).child("status").setValue("B")
-            }catch (e:Exception){
-                Thread.sleep(2000)
-                dataBaseReference.child(instanceId.result).child("status").setValue("B")
-                Log.i("STATUS",e.toString())
-            }
+            sharedPreferences.getCodigo()?.let { dataBaseReference.child(it).child("status").setValue("B") }
         }
     }
 
@@ -59,12 +56,11 @@ class MyIntentService : IntentService("MyIntentService") {
     }
 
     fun criarNosBD() {
+        isRunning = true
+        val sharedPreferences = application.let { SharedPreferences(it) }
         getLocalizacaoUsuario()
-        var intanceId = FirebaseInstallations.getInstance().getId()
-        Timer("SettingUp", false).schedule(5000) {
-            var requisicao = Requisicao(2, lat, long, intanceId.result, "A")
-            dataBaseReference.child(requisicao.codigoRequisicao).setValue(requisicao)
-        }
+        var requisicao = sharedPreferences.getCodigo()?.let { Requisicao(2, lat, long, it, "A") }
+        dataBaseReference.child(requisicao!!.codigoRequisicao).setValue(requisicao)
     }
 
 
@@ -90,16 +86,16 @@ class MyIntentService : IntentService("MyIntentService") {
         var settingsClient = LocationServices.getSettingsClient(this)
         settingsClient.checkLocationSettings(builder.build()).addOnSuccessListener {
             OnSuccessListener<LocationSettingsResponse>() {
-                Log.i("TESE","${it.locationSettingsStates.isNetworkLocationPresent}" )
+                Log.i("TESE", "${it.locationSettingsStates.isNetworkLocationPresent}")
             }
         }
             .addOnFailureListener(OnFailureListener {
-                when(it){
-                    is ResolvableApiException ->{
+                when (it) {
+                    is ResolvableApiException -> {
                         try {
                             var resolvable = it
                             resolvable.startResolutionForResult(Activity(), 10)
-                        }catch (e: Exception){
+                        } catch (e: Exception) {
 
                         }
                     }
@@ -107,7 +103,7 @@ class MyIntentService : IntentService("MyIntentService") {
                 }
             })
 
-        if(isRunning) {
+        if (isRunning) {
 
             locationCallback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult?) {
@@ -132,7 +128,7 @@ class MyIntentService : IntentService("MyIntentService") {
             }
 
 
-        fusedLocationClient.requestLocationUpdates(locationRequest,locationCallback, Looper.getMainLooper())
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
 
     }
 
