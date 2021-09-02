@@ -2,9 +2,12 @@ package com.example.helpmiga.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.helpmiga.R
+import com.example.helpmiga.data.model.Usuario
 import com.example.helpmiga.databinding.ActivityLoginBinding
+import com.example.helpmiga.ui.SharedPreferences
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -19,7 +22,6 @@ class LoginActivity : AppCompatActivity() {
 
     private var googleSignInClient: GoogleSignInClient? = null
     private lateinit var binding: ActivityLoginBinding
-    // [START declare_auth]
     private lateinit var auth: FirebaseAuth
 
 
@@ -35,14 +37,12 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
-
     fun googleAuth(){
         binding.signInButton.setOnClickListener {
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build()
-
             // Build a GoogleSignInClient with the options specified by gso.
             googleSignInClient = GoogleSignIn.getClient(this, gso)
             signIn()
@@ -61,9 +61,11 @@ class LoginActivity : AppCompatActivity() {
         if (requestCode == 1) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
+                val sharedPreferences = SharedPreferences(this)
                 // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)!!
-//                Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
+                var usuario = Usuario(1,account.displayName,account.email)
+                sharedPreferences.salvarUsuario(usuario)
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
@@ -77,15 +79,9 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-//                    Log.d(TAAG, "signInWithCredential:success")
-                    val user = auth.currentUser
                     toHelpActivity()
-//                    updateUI(user)
                 } else {
-                    // If sign in fails, display a message to the user.
-//                    Log.w(TAG, "signInWithCredential:failure", task.exception)
-//                    updateUI(null)
+                    Toast.makeText(this,"Não foi possível fazer o login",Toast.LENGTH_LONG).show()
                 }
             }
     }

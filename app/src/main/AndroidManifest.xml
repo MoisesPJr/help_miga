@@ -19,7 +19,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HelpMiga">
-        <activity android:name=".ui.activity.MainActivity">
+        <activity android:name=".ui.activity.MainActivity"
+            android:noHistory="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -46,7 +48,7 @@
             android:name=".ui.activity.MapaActivity"
             android:label="@string/title_activity_mapa" />
         <activity android:name=".ui.activity.ActivityContatos" />
-        <activity android:name=".ui.activity.HelpActivity"/>
+        <activity android:name=".ui.activity.HelpActivity" />
 
 
         <service

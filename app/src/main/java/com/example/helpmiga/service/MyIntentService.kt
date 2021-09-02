@@ -8,25 +8,18 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.app.JobIntentService
 import com.example.helpmiga.data.model.Requisicao
 import com.example.helpmiga.ui.SharedPreferences
-import com.example.helpmiga.ui.activity.MainActivity
-import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.installations.FirebaseInstallations
-import java.lang.Exception
-import java.util.*
-import kotlin.concurrent.schedule
-import com.google.android.gms.common.api.ResolvableApiException as ResolvableApiException
 
 class MyIntentService : IntentService("MyIntentService") {
 
@@ -86,7 +79,7 @@ class MyIntentService : IntentService("MyIntentService") {
         var settingsClient = LocationServices.getSettingsClient(this)
         settingsClient.checkLocationSettings(builder.build()).addOnSuccessListener {
             OnSuccessListener<LocationSettingsResponse>() {
-                Log.i("TESE", "${it.locationSettingsStates.isNetworkLocationPresent}")
+                Log.i("TESTE", "${it.locationSettingsStates.isNetworkLocationPresent}")
             }
         }
             .addOnFailureListener(OnFailureListener {
@@ -122,14 +115,34 @@ class MyIntentService : IntentService("MyIntentService") {
 
                     Toast.makeText(applicationContext, "Latitude:${lat} Longitude:${long}", Toast.LENGTH_LONG).show()
                 } else {
-                    Toast.makeText(applicationContext, "Impossível pegar localização", Toast.LENGTH_LONG).show()
-                }
+                    showSettingsAlert()                }
                 // Got last known location. In some rare situations this can be null.
             }
 
 
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
 
+    }
+    fun showSettingsAlert() {
+        val alertDialog = android.app.AlertDialog.Builder(this)
+
+        // Titulo do dialogo
+        alertDialog.setTitle("GPS")
+
+        // Mensagem do dialogo
+        alertDialog.setMessage("GPS não está habilitado. Deseja configurar?")
+
+        // botao ajustar configuracao
+        alertDialog.setPositiveButton("Configurar") { dialog, which ->
+            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            startActivity(intent)
+        }
+
+        // botao cancelar
+        alertDialog.setNegativeButton("Cancelar") { dialog, which -> dialog.cancel() }
+
+        // visualizacao do dialogo
+        alertDialog.show()
     }
 
     override fun onHandleIntent(intent: Intent?) {

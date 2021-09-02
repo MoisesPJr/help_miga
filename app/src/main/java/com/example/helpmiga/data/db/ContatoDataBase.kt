@@ -5,11 +5,13 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.helpmiga.data.model.Contato
+import com.example.helpmiga.data.model.Usuario
 
-@Database(entities = arrayOf(Contato::class), version = 1, exportSchema = false)
+@Database(entities = arrayOf(Contato::class, Usuario::class), version = 1, exportSchema = false)
 abstract class ContatoDataBase : RoomDatabase(){
 
     abstract fun contatoDao(): ContatoDao
+    abstract fun usuarioDao(): UsuarioDao
 
     companion object {
 
