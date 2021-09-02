@@ -15,7 +15,6 @@ import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
     private var permissoes = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
     private  var user: FirebaseUser? = null
