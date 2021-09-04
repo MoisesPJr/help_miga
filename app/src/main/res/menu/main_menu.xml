@@ -18,14 +18,14 @@
         android:icon="@drawable/ic_baseline_exit_to_app_24"
         android:iconTint="@color/white"
         app:showAsAction="always"
-        android:title="Contatos">
+        android:title="Sair">
     </item>
 
     <item android:id="@+id/menuCancel"
         android:icon="@drawable/ic_baseline_check_circle_outline_24"
         android:iconTint="@color/white"
         app:showAsAction="always"
-        android:title="Contatos">
+        android:title="Tudo certo">
     </item>
 
 

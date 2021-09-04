@@ -1,23 +1,24 @@
 {
   "project_info": {
     "project_number": "66518034582",
+    "firebase_url": "https://persuasive-pipe-319315-default-rtdb.firebaseio.com",
     "project_id": "persuasive-pipe-319315",
     "storage_bucket": "persuasive-pipe-319315.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:66518034582:android:490f0b4a08c36a272efab7",
+        "mobilesdk_app_id": "1:66518034582:android:8c99319d41004f4e2efab7",
         "android_client_info": {
-          "package_name": "com.example.helpmiga"
+          "package_name": "com.mjtech.helpmiga"
         }
       },
       "oauth_client": [
         {
-          "client_id": "66518034582-sgdgvf6el1vs351ltdgqsrs7cl9en0ao.apps.googleusercontent.com",
+          "client_id": "66518034582-cc1sh4anb09rd8qldsbbufrnhlv040jc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.helpmiga",
+            "package_name": "com.mjtech.helpmiga",
             "certificate_hash": "d99770e1b5df5b2c08c8b755c52373328a2a3007"
           }
         },
@@ -28,7 +29,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDJLEcbKl6BxcCqDySGF2SahmLOMB2e6Z8"
+          "current_key": "AIzaSyCUGgJwczk0bdysH_NhO7UKk3slns5lSHQ"
         }
       ],
       "services": {
